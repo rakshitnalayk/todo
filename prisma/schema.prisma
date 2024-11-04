@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://neondb_owner:rlv4s6ZDJtfh@ep-fragrant-fire-a184jqpx.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+}
+
+model Todo {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  completed   Boolean   @default(false)
+  image       String?
+  priority    Priority  @default(LOW)
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  folderId    String?
+  folder      Folder?   @relation(fields: [folderId], references: [id])
+  tags        Tag[]
+}
+
+model Folder {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  todos     Todo[]
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  todos     Todo[]
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
